@@ -1,0 +1,26 @@
+{
+  "name": "people-metrics-demo",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Demo people-data stack: mock Rippling and Ashby APIs, one metrics layer, two reports, and a role-scoped MCP server. All data is synthetic.",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "check": "tsx scripts/check.ts"
+  },
+  "dependencies": {
+    "mcp-handler": "^2.3.0",
+    "next": "^16.4.0",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.5",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2"
+  }
+}

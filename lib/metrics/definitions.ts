@@ -425,8 +425,8 @@ export const LEADERSHIP_HEADLINE: MetricId[] = [
 ];
 
 /** Leadership panels from the reference doc, with their cadence. */
-/** Still defined and served by the MCP tools, but not shown on either report page. */
-export const REPORT_HIDDEN: MetricId[] = ["pipeline_conversion"];
+/** Still defined and served by the MCP tools, but not shown on the HR Overview page. */
+export const REPORT_HIDDEN: MetricId[] = ["pipeline_conversion", "review_completion", "compa_ratio"];
 
 export const LEADERSHIP_PANELS: { name: string; cadence: "Monthly" | "Quarterly"; metrics: MetricId[] }[] = [
   { name: "Headcount", cadence: "Monthly", metrics: ["headcount"] },

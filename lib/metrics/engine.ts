@@ -175,6 +175,7 @@ const IMPL: Record<MetricId, Impl> = {
         { key: "voluntary_count", label: "Voluntary separations", value: count("voluntary"), unit: "count" },
         { key: "involuntary_count", label: "Involuntary separations", value: count("involuntary"), unit: "count" },
         { key: "unclassified_count", label: "Separations with no reason code", value: count("unclassified"), unit: "count" },
+        { key: "unclassified_rate", label: "No reason code (annualized, completes the split)", value: avgHc ? round1((count("unclassified") / avgHc) * ann) : null, unit: "pct" },
       ];
     },
   },
@@ -272,7 +273,7 @@ const IMPL: Record<MetricId, Impl> = {
       const from = periodOf(w.start);
       const to = periodOf(w.end);
       const hires = ds.people.filter((p) => isEmployee(p) && inWin(p.startDate, w)).map((): Rec => ({ dims: {}, num: 0, den: 1 }));
-      const costs = ds.costs.filter((c) => c.month >= from && c.month <= to).map((c): Rec => ({ dims: {}, num: c.amount, den: 0, meta: { category: c.category } }));
+      const costs = ds.costs.filter((c) => c.month >= from && c.month <= to).map((c): Rec => ({ dims: {}, num: c.amount, den: 0, meta: { category: c.category, nocount: true } }));
       return [...hires, ...costs];
     },
     extras: (_ds, _w, recs) => {
@@ -414,9 +415,11 @@ const IMPL: Record<MetricId, Impl> = {
           if (!b || p.salary === null) return [];
           return [{ dims: personDims(p), num: p.salary / b.mid, den: 1, meta: { pos: (p.salary - b.min) / (b.max - b.min), below: p.salary < b.min, above: p.salary > b.max } }];
         }),
-    extras: (ds, _w, recs) => {
+    extras: (ds, w, recs) => {
       const b = ds.benchmarks[0];
+      const active = ds.people.filter((p) => isEmployee(p) && activeAt(p, w.end)).length;
       return [
+        { key: "excluded", label: "Active employees left out (no department, level or benchmark)", value: active - recs.length, unit: "count" },
         { key: "range_position", label: "Average position in pay range (0 is minimum, 1 is maximum)", value: recs.length ? Math.round((sum(recs.map((r) => Number(r.meta?.pos))) / recs.length) * 100) / 100 : null, unit: "ratio" },
         { key: "below_range", label: "Share below range minimum", value: round1(pct(recs.filter((r) => r.meta?.below).length, recs.length)), unit: "pct" },
         { key: "above_range", label: "Share above range maximum", value: round1(pct(recs.filter((r) => r.meta?.above).length, recs.length)), unit: "pct" },
@@ -430,8 +433,8 @@ const IMPL: Record<MetricId, Impl> = {
     records: (ds, w) => {
       const from = periodOf(w.start);
       const to = periodOf(w.end);
-      const pay = ds.payroll.filter((m) => m.month >= from && m.month <= to).map((m): Rec => ({ dims: {}, num: m.salary + m.benefits + m.taxes, den: 0 }));
-      const recruiting = ds.costs.filter((c) => c.month >= from && c.month <= to).map((c): Rec => ({ dims: {}, num: c.amount, den: 0 }));
+      const pay = ds.payroll.filter((m) => m.month >= from && m.month <= to).map((m): Rec => ({ dims: {}, num: m.salary + m.benefits + m.taxes, den: 0, meta: { nocount: true } }));
+      const recruiting = ds.costs.filter((c) => c.month >= from && c.month <= to).map((c): Rec => ({ dims: {}, num: c.amount, den: 0, meta: { nocount: true } }));
       const headcount = ds.people
         .filter(isEmployee)
         .map((p) => activeFraction(p, w))
@@ -502,7 +505,8 @@ function reduce(impl: Impl, recs: Rec[], w: Win) {
   const numerator = sum(recs.map((r) => r.num));
   const denominator = sum(recs.map((r) => r.den));
   const value = impl.countOnly ? numerator : denominator > 0 ? (numerator / denominator) * impl.scale(w) : null;
-  return { value, numerator, denominator, n: recs.length };
+  // Cost rows carry money, not people or events, so they never count toward n.
+  return { value, numerator, denominator, n: recs.filter((r) => !r.meta?.nocount).length };
 }
 
 export interface ComputeOptions {

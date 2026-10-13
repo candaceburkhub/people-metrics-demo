@@ -127,7 +127,7 @@ export const METRICS: MetricDefinition[] = [
     restricted: false,
     cadence: "monthly",
     window: "t12m",
-    windowLabel: "Hires in trailing 12 months",
+    windowLabel: "Hires in trailing 12 months with 90 days elapsed",
     unit: "pct",
     dimensions: ["department", "location", "level"],
     target: { value: 6, direction: "max", warn: 9, note: "Illustrative target." },
@@ -425,9 +425,12 @@ export const LEADERSHIP_HEADLINE: MetricId[] = [
 ];
 
 /** Leadership panels from the reference doc, with their cadence. */
+/** Still defined and served by the MCP tools, but not shown on either report page. */
+export const REPORT_HIDDEN: MetricId[] = ["pipeline_conversion"];
+
 export const LEADERSHIP_PANELS: { name: string; cadence: "Monthly" | "Quarterly"; metrics: MetricId[] }[] = [
   { name: "Headcount", cadence: "Monthly", metrics: ["headcount"] },
-  { name: "Hiring", cadence: "Monthly", metrics: ["time_to_fill", "offer_acceptance", "pipeline_conversion"] },
+  { name: "Hiring", cadence: "Monthly", metrics: ["time_to_fill", "offer_acceptance"] },
   { name: "Retention", cadence: "Monthly", metrics: ["turnover", "early_attrition", "regrettable_loss"] },
   { name: "Onboarding", cadence: "Monthly", metrics: ["day_one_readiness", "checkin_completion"] },
   { name: "Engagement", cadence: "Quarterly", metrics: ["enps"] },

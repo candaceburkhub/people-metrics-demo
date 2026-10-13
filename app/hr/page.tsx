@@ -22,7 +22,7 @@ export default async function HrPage() {
       {r.groups.map((g) => (
         <section key={g.group} id={g.group.replace(/\W+/g, "-")}>
           <h2>{g.group}</h2>
-          <div className="grid g3">
+          <div className="grid gcols" style={{ "--cols": Math.min(g.metrics.length, 4) } as React.CSSProperties}>
             {g.metrics.map((m) => (
               <div key={m.id} className={`card mcard s-${m.status}`}>
                 <Tile m={m} />

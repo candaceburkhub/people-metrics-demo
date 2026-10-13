@@ -11,6 +11,7 @@ import {
   METRICS,
   METRIC_BY_ID,
   MIN_GROUP_SIZE,
+  REPORT_HIDDEN,
   type Dim,
   type MetricId,
 } from "./definitions";
@@ -55,7 +56,7 @@ export function buildHrReport(ds: Dataset, period?: Period): HrReport {
     const order = [...new Set(METRICS.map((m) => m.group))];
     const groups = order.map((group) => ({
       group,
-      metrics: METRICS.filter((m) => m.group === group).map((m) => {
+      metrics: METRICS.filter((m) => m.group === group && !REPORT_HIDDEN.includes(m.id)).map((m) => {
         const groupBy: Dim | undefined = m.dimensions.includes("department") ? "department" : m.dimensions[0];
         return getMetric(ds, m.id, { scope: "hr", period: p, groupBy });
       }),

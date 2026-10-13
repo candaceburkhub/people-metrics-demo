@@ -11,8 +11,8 @@ export default async function HrPage() {
   return (
     <main>
       {(() => { const [y, m] = r.period.split("-").map(Number); return (<>
-        <h1>HR Report</h1>
-        <p className="period"><b>{new Date(Date.UTC(y, m - 1)).toLocaleString("en-US", { month: "long", year: "numeric", timeZone: "UTC" })}</b> · As of {r.asOf}</p>
+        <h1>HR Overview</h1>
+        <p className="period">Reporting period <b>{new Date(Date.UTC(y, m - 1)).toLocaleString("en-US", { month: "long", year: "numeric", timeZone: "UTC" })}</b> · Updated {new Date().toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric", timeZone: "America/New_York" })}</p>
       </>); })()}
       <div className="toc">
         {r.groups.map((g) => <a key={g.group} href={`#${g.group.replace(/\W+/g, "-")}`}>{g.group}</a>)}

@@ -14,7 +14,7 @@ export default async function LeadershipPage() {
   return (
     <main>
       <h1>People Metrics, {quarter}</h1>
-      <p className="period">Through <b>{new Date(Date.UTC(yr, mo - 1)).toLocaleString("en-US", { month: "long", year: "numeric", timeZone: "UTC" })}</b> · As of {r.asOf}</p>
+      <p className="period">Through <b>{new Date(Date.UTC(yr, mo - 1)).toLocaleString("en-US", { month: "long", year: "numeric", timeZone: "UTC" })}</b> · Updated {new Date().toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric", timeZone: "America/New_York" })}</p>
 
       <div className="summary">
         <span className="pill">Summary · Draft pending People Ops review</span>

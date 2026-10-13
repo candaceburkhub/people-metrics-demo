@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import "./globals.css";
+import { NavLinks } from "@/components/NavLinks";
 
 export const metadata: Metadata = {
   title: "People Metrics Demo",
@@ -14,8 +15,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <div className="wrap">
           <nav className="top">
             <Link href="/" className="brand">People Metrics Demo</Link>
-            <Link href="/hr">HR report</Link>
-            <Link href="/leadership">Leadership report</Link>
+            <NavLinks />
             <span className="demo">Synthetic data</span>
           </nav>
           {children}

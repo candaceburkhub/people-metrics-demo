@@ -10,19 +10,21 @@ export default async function HrPage() {
   const high = r.audit.findings.filter((f) => f.severity === "high").length;
   return (
     <main>
-      <h1>HR report</h1>
-      <p className="sub">Every metric, with numerator, denominator, n, breakdowns, why the off-track ones moved, and the data quality behind them. Period {r.period}, as of {r.asOf}. Definitions {r.definitionsVersion}.</p>
+      {(() => { const [y, m] = r.period.split("-").map(Number); return (<>
+        <h1>HR Report</h1>
+        <p className="period"><b>{new Date(Date.UTC(y, m - 1)).toLocaleString("en-US", { month: "long", year: "numeric", timeZone: "UTC" })}</b> · As of {r.asOf}</p>
+      </>); })()}
       <div className="toc">
         {r.groups.map((g) => <a key={g.group} href={`#${g.group.replace(/\W+/g, "-")}`}>{g.group}</a>)}
-        <a href="#movers">Why metrics moved</a><a href="#quality">Data quality{high ? ` (${high} high)` : ""}</a><a href="#sync">Sync</a>
+        <a href="#movers">Why Metrics Moved</a><a href="#quality">Data Quality{high ? ` (${high} high)` : ""}</a><a href="#sync">Sync</a>
       </div>
 
       {r.groups.map((g) => (
         <section key={g.group} id={g.group.replace(/\W+/g, "-")}>
           <h2>{g.group}</h2>
-          <div className="grid g2">
+          <div className="grid g3">
             {g.metrics.map((m) => (
-              <div key={m.id} className="card">
+              <div key={m.id} className={`card mcard s-${m.status}`}>
                 <Tile m={m} />
                 <Bars m={m} />
                 {m.extras.length > 0 && (
@@ -48,11 +50,11 @@ export default async function HrPage() {
         </section>
       ))}
 
-      <h2 id="movers">Why the flagged metrics moved</h2>
+      <h2 id="movers">Why the Flagged Metrics Moved</h2>
       <p className="small muted">Contributions add up to the total change. Small groups are shown here because this is the HR scope.</p>
       <div className="grid g2">
         {r.movers.map((mv) => (
-          <div key={mv.id} className="card">
+          <div key={mv.id} className={`card mover ${mv.status}`}>
             <h3>{mv.name} <Status s={mv.status} /></h3>
             <div className="small muted">{mv.explanation.compareTo} {mv.explanation.previous.display} → {mv.explanation.period} {mv.explanation.current.display} ({mv.explanation.deltaDisplay}), by {mv.explanation.groupBy}</div>
             <div className="tablewrap"><table>
@@ -66,7 +68,7 @@ export default async function HrPage() {
         {r.movers.length === 0 && <div className="card">Nothing is flagged this period.</div>}
       </div>
 
-      <h2 id="quality">Data quality audit</h2>
+      <h2 id="quality">Data Quality Audit</h2>
       <p className="small muted">Records that quietly break the metrics. Record IDs only, no names.</p>
       <div className="card tablewrap"><table>
         <thead><tr><th>Severity</th><th>Finding</th><th className="num">Count</th><th>Affects</th><th>Fix</th></tr></thead>
@@ -81,7 +83,7 @@ export default async function HrPage() {
         ))}</tbody>
       </table></div>
 
-      <h2 id="sync">Last sync</h2>
+      <h2 id="sync">Last Sync</h2>
       <div className="card tablewrap"><table>
         <thead><tr><th>Source</th><th>Status</th><th className="num">Calls</th><th className="num">Retries</th><th className="num">Records</th><th className="num">ms</th><th>Notes</th></tr></thead>
         <tbody>{r.audit.sync.sources.map((s) => (

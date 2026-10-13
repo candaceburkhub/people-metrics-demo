@@ -12,7 +12,7 @@ export function Status({ s }: { s: MetricResult["status"] }) {
 export function Tile({ m, hero = false, short }: { m: MetricResult; hero?: boolean; short?: string }) {
   const pts = m.trend.map((t) => ({ label: t.period, value: t.value, display: t.display }));
   return (
-    <div className={`card tile${hero ? " hero" : ""}`}>
+    <div className={`card tile s-${m.status}${hero ? " hero" : ""}`}>
       <div className="label"><span>{short ?? m.name}</span><Status s={m.status} /></div>
       <div className="value">{m.display}</div>
       <div className="meta">

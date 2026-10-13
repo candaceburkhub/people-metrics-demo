@@ -18,7 +18,11 @@ export default async function LeadershipPage() {
 
       <div className="summary">
         <span className="pill">Summary · Draft pending People Ops review</span>
-        {r.commentary.paragraphs.map((p, i) => <p key={i}>{p}</p>)}
+        <ul className="bullets">
+          {r.commentary.bullets.map((b, i) => (
+            <li key={i}>{b.text}{b.next && <div className="next"><b>Next step:</b> {b.next}</div>}</li>
+          ))}
+        </ul>
       </div>
 
       <h2>Headcount against plan</h2>

@@ -320,7 +320,7 @@ export const METRICS: MetricDefinition[] = [
     dimensions: ["department"],
     target: { value: 20, direction: "min", warn: 10, note: "Illustrative target." },
     ifOffTrack: "I'd read the comment themes for the lowest-scoring team and agree two visible actions with its leader.",
-    notes: ["Responses are anonymous. Department groups under five responses are hidden from leadership."],
+    notes: ["Employees answer one question, how likely they are to recommend working here, on a 0 to 10 scale. A score of 9 or 10 is a promoter, 7 or 8 is passive and left out of the math, and 0 to 6 is a detractor.", "Responses are anonymous. Department groups under five responses are hidden from leadership."],
   },
   {
     id: "review_completion",

@@ -7,5 +7,5 @@ export function NavLinks() {
   const item = (href: string, label: string) => (
     <Link href={href} className={`navbtn${path === href ? " active" : ""}`} aria-current={path === href ? "page" : undefined}>{label}</Link>
   );
-  return <>{item("/hr", "HR Report")}{item("/leadership", "Leadership Report")}</>;
+  return <>{item("/hr", "HR Overview")}{item("/leadership", "Leadership Report")}</>;
 }

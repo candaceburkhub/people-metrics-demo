@@ -94,6 +94,8 @@ export interface HeadcountVsPlan {
 
 export interface Commentary {
   status: "draft_pending_human_review";
+  /** The same commentary as bullets, which is how the leadership page shows it. */
+  bullets: { text: string; next?: string }[];
   paragraphs: string[];
   basis: string[];
 }
@@ -160,6 +162,8 @@ function drafted(ds: Dataset, period: Period, results: MetricResult[], hvp: Head
 
   const lines: string[] = [];
   const actions: string[] = [];
+  const bullets: { text: string; next?: string }[] = [];
+  if (paragraphs.length) bullets.push({ text: paragraphs[0] });
   for (const r of flagged) {
     const def = METRIC_BY_ID[r.id];
     const per = def.cadence === "quarterly" ? "quarter" : "month";
@@ -180,6 +184,8 @@ function drafted(ds: Dataset, period: Period, results: MetricResult[], hvp: Head
       }
     }
     lines.push(line);
+    const nextRaw = def.ifOffTrack?.replace(/^I'd /, "");
+    bullets.push({ text: line, next: nextRaw ? nextRaw.charAt(0).toUpperCase() + nextRaw.slice(1) : undefined });
     if (def.ifOffTrack) actions.push(def.ifOffTrack.replace(/^I'd /, "").replace(/\.$/, ""));
     basis.push(`${r.id} ${r.display} (target ${r.target?.display}, n=${r.n})`);
   }
@@ -194,8 +200,12 @@ function drafted(ds: Dataset, period: Period, results: MetricResult[], hvp: Head
       `One caution. ${capitalize(joinList(small.map((r) => shortName(r.id).toLowerCase())))} rest${small.length === 1 ? "s" : ""} on ${lo === hi ? lo : `${lo} to ${hi}`} records this month, so the trend is more reliable than any single month.`,
     );
   }
-  if (!flagged.length) paragraphs.push("Every metric with a target is on track this period.");
-  return { status: "draft_pending_human_review", paragraphs, basis };
+  if (small.length) bullets.push({ text: paragraphs[paragraphs.length - 1].replace(/^One caution\. /, "Caution: ") });
+  if (!flagged.length) {
+    paragraphs.push("Every metric with a target is on track this period.");
+    bullets.push({ text: "Every metric with a target is on track this period." });
+  }
+  return { status: "draft_pending_human_review", bullets, paragraphs, basis };
 }
 
 export function buildLeadershipReport(ds: Dataset, period?: Period): LeadershipReport {
@@ -237,7 +247,7 @@ export function slackDigest(r: LeadershipReport): { text: string; blocks: unknow
     text: `DRAFT for People Ops review. People metrics for ${r.period}`,
     blocks: [
       { type: "header", text: { type: "plain_text", text: `People metrics, ${r.period} (draft for review)` } },
-      { type: "section", text: { type: "mrkdwn", text: r.commentary.paragraphs.join("\n\n") } },
+      { type: "section", text: { type: "mrkdwn", text: r.commentary.bullets.map((b) => `• ${b.text}${b.next ? `\n    _Next: ${b.next}_` : ""}`).join("\n") } },
       { type: "section", text: { type: "mrkdwn", text: lines.join("\n") } },
       { type: "context", elements: [{ type: "mrkdwn", text: `Synthetic demo data. Definitions ${r.definitionsVersion}. ${r.privacyNote}` }] },
     ],

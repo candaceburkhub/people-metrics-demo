@@ -106,3 +106,9 @@ pre { background: var(--surface); border: 1px solid var(--line); border-radius: 
 @media (max-width: 1000px) { .gcols { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 620px) { .gcols { grid-template-columns: 1fr; } }
 @media (min-width: 1001px) { .gcols[style*="--cols:4"] .bars { gap: 9px; } .gcols[style*="--cols:4"] .bar { grid-template-columns: 1fr auto; row-gap: 3px; } .gcols[style*="--cols:4"] .bar .track { grid-column: 1 / -1; grid-row: 2; height: 8px; } .gcols[style*="--cols:4"] .bar .val { grid-column: 2; grid-row: 1; } .gcols[style*="--cols:4"] .tile .value { font-size: 26px; } }
+
+.bullets { margin: 0; padding: 0; list-style: none; display: grid; gap: 12px; }
+.bullets li { position: relative; padding-left: 26px; font-size: 15.5px; }
+.bullets li::before { content: ""; position: absolute; left: 2px; top: .5em; width: 11px; height: 11px; border-radius: 50%; background: var(--navy); }
+.bullets .next { font-size: 14px; color: var(--ink2); margin-top: 3px; }
+.bullets .next b { color: var(--ink); }

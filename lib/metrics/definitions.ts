@@ -190,7 +190,7 @@ export const METRICS: MetricDefinition[] = [
     restricted: false,
     cadence: "monthly",
     window: "month",
-    windowLabel: "Offers extended in the month",
+    windowLabel: "Decided offers extended in the month",
     unit: "pct",
     dimensions: ["department", "level", "location", "source"],
     target: { value: 85, direction: "min", warn: 78, note: "Illustrative target." },

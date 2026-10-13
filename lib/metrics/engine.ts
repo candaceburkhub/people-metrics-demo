@@ -235,6 +235,7 @@ const IMPL: Record<MetricId, Impl> = {
         .filter((o) => inWin(o.extendedAt, w) && o.status !== "pending")
         .map((o) => ({ dims: jobDims(ix.jobById.get(o.jobId), ix.appById.get(o.applicationId)?.source), num: o.status === "accepted" ? 1 : 0, den: 1 })),
     extras: (ds, w, recs) => [
+      { key: "extended", label: "Offers extended in the month (all)", value: ds.offers.filter((o) => inWin(o.extendedAt, w)).length, unit: "count" },
       { key: "accepted", label: "Offers accepted", value: sum(recs.map((r) => r.num)), unit: "count" },
       { key: "declined", label: "Offers declined or rescinded", value: recs.length - sum(recs.map((r) => r.num)), unit: "count" },
       { key: "pending", label: "Offers still pending", value: ds.offers.filter((o) => inWin(o.extendedAt, w) && o.status === "pending").length, unit: "count" },
